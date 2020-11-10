@@ -3,7 +3,7 @@
 Technologies Used:
 * Node/Express(Backend-Server)
 * JsonWebToken/Bcrypt(JWT for authentication and authorization/ Bcrypt for salting passwords)
-* PostgreSQL with TypeORM(DB/DB Relations)
+* PostgreSQL/TypeORM(DB/DB Relations)
 * TypeScript
 
 Steps to run this project:
