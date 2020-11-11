@@ -4,17 +4,18 @@ import { Request, Response } from 'express';
 import { getManager } from "typeorm";
 import { User } from "../entity/User";
 import jwtGenerator from "../utils/jwtGenerator";
+import { validInfoMiddleware } from "../middleware/validInfoMiddleware";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
 //Register
-// router.post("/register", validInfoMiddleware, authRegisterUser);
-router.post("/register", async(req: Request, res: Response) => {
+router.post("/register", validInfoMiddleware, async(req: Request, res: Response) => {
 
   try {
     const{ name, email, password } = req.body;
 
-      //Get a User repository to perform operations with post
+      //Get the User repository
       const userRepository = getManager().getRepository(User);
 
       //Load a user by a given email
@@ -31,7 +32,8 @@ router.post("/register", async(req: Request, res: Response) => {
       const user = userRepository.create();
       user.name = name;
       user.email = email;
-      user.password = bcryptPassword;  
+      user.password = bcryptPassword;
+      user.jobId = [];
       //Save User in DB
       const savedUser = await userRepository.save(user);
       //Generate
@@ -47,8 +49,7 @@ router.post("/register", async(req: Request, res: Response) => {
 });
 
 //Login
-// router.post("/login", validInfoMiddleware, async(req, res) => {
-router.post("/login", async(req, res) => {
+router.post("/login", validInfoMiddleware, async(req, res) => {
   try {
 
     const{ email, password } = req.body;
@@ -83,16 +84,16 @@ router.post("/login", async(req, res) => {
 })
 
 
-// router.get("/me", authMiddleware, async(req, res) => {
-//   try {
-//     //If the user passes our middleware, we know the user is valid
-//     res.json(true);
+router.get("/me", authMiddleware, async(req, res) => {
+  try {
+    //If the user passes our middleware, we know the user is valid
+    res.json(true);
     
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(403).json("User is not authorized");
-//   }
-// })
+  } catch (err) {
+    console.error(err.message);
+    res.status(403).json("User is not authorized");
+  }
+})
 
 
 export default router;

@@ -1,4 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
+import { Job } from "./Job";
 
 @Entity("users")
 export class User {
@@ -9,10 +10,12 @@ export class User {
     @Column({type: "varchar" , length: 255})
     name: string;
 
-    @Column({type: "varchar" , length: 255})
+    @Column({type: "varchar" , length: 255, unique: true})
     email: string;
 
     @Column({type: "varchar" , length: 255})
     password: string;
 
+    @OneToMany(() => Job, job => job.userid)
+    jobId: Job[];
 }
