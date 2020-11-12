@@ -1,45 +1,39 @@
 import * as express from "express";
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getManager } from "typeorm";
 import { Job } from "../entity/Job";
 import { User } from "../entity/User";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { IUserRequest } from "../types/IUserRequest";
-
 const router = express.Router();
+
 
 //Create a job
 router.post("/", authMiddleware, async(req: IUserRequest, res: Response) => {
 
   try {
-
     const { title, location, companyName, postedAt, description }: Job = req.body;
-    console.log('Inside Job Route, reqJob is: ', title, location, companyName, postedAt, description);
 
-    //Get the User repository
+    //Create User repository
     const userRepository = getManager().getRepository(User);
-    
-    //Get the user from the middleware
-    const user = await userRepository.findOne(req.user);
-    console.log('Inside Job Route, user is: ', user);
-    console.log('Inside Job Route, req.user is: ', req.user);
-
+    //Create Job repository
     const jobRepository = getManager().getRepository(Job);
 
-    //Create a new User Entity
+    //Get the user id from the middleware, and the user from the repository
+    const user = await userRepository.findOne(req.user);
+    
+    //Create a new Job Entity Object
     const job = jobRepository.create();
     job.title = title;
     job.location = location;
     job.companyName = companyName;
     job.postedAt = postedAt;
     job.description = description;
-    job.userid = user;
+    job.user = user;
 
     //Save Job in DB
     await jobRepository.save(job);
-
     res.json({message: "Successfully Saved."})
-
   } catch (err) {
     console.log(err.message);
     res.status(500).send("Server Error");
@@ -47,5 +41,24 @@ router.post("/", authMiddleware, async(req: IUserRequest, res: Response) => {
 
 });
 
+//Get all jobs from current user
+router.get("/", authMiddleware, async(req: IUserRequest, res: Response) => {
+  try {
+    //Create Job repository
+    const jobRepository = getManager().getRepository(Job);
+    const jobs = await jobRepository.find({
+      relations: ["user"],
+      where: {
+        user: {
+          id: req.user
+        }
+      }
+    });
+    res.status(200).json(jobs);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 export default router;

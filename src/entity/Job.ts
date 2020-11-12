@@ -26,7 +26,6 @@ export class Job {
   @Column({type: "text"})
   description: string;
 
-  @ManyToOne(() => User, user => user.jobId, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-  @JoinColumn({ referencedColumnName: 'id', name: 'userid' })
-  userid: User;
+  @ManyToOne(() => User, user => user.jobs, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  user: User;
 }

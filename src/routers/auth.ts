@@ -33,7 +33,7 @@ router.post("/register", validInfoMiddleware, async(req: Request, res: Response)
       user.name = name;
       user.email = email;
       user.password = bcryptPassword;
-      user.jobId = [];
+      user.jobs = [];
       //Save User in DB
       const savedUser = await userRepository.save(user);
       //Generate

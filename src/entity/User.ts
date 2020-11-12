@@ -16,6 +16,6 @@ export class User {
     @Column({type: "varchar" , length: 255})
     password: string;
 
-    @OneToMany(() => Job, job => job.userid)
-    jobId: Job[];
+    @OneToMany(() => Job, job => job.user)
+    jobs: Job[];
 }
