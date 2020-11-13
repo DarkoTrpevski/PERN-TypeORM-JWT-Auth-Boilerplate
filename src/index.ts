@@ -3,9 +3,9 @@ import {createConnection} from "typeorm";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
-import auth from "./routers/auth";
-import dashboard from "./routers/dashboard";
-import job from "./routers/job";
+import auth from "./routes/auth";
+import dashboard from "./routes/dashboard";
+import job from "./routes/job";
 require("dotenv").config();
 
 createConnection().then(() => {
